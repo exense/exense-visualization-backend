@@ -17,6 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
+import ch.exense.viz.proxy.ProxiedRequest;
+import ch.exense.viz.proxy.ProxiedResponse;
+import ch.exense.viz.proxy.ProxyService;
 
 @Singleton
 @Path("/viz")
@@ -65,9 +68,9 @@ public class VizServlet{
 	@Path("/proxy")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response proxyQuery(ProxiedQuery query) {
-		
-		return Response.status(200).entity(found).build();
+	public Response proxyQuery(ProxiedRequest request) {
+		ProxiedResponse response = new ProxyService().executeProxiedQuery(request);
+		return Response.status(response.getCode()).entity(response.getData()).build();
 	}
 
 }
