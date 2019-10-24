@@ -9,6 +9,8 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 
+import ch.exense.viz.persistence.MongoClientSession;
+
 public class AbstractAccessor {
 
 	protected MongoClientSession mongoClientSession;

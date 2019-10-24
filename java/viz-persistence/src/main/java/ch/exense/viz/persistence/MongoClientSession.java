@@ -5,11 +5,10 @@
  * See <http://www.gnu.org/licenses/>.
  * 
  *******************************************************************************/
-package ch.exense.viz.persistence.accessors;
+package ch.exense.viz.persistence;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +26,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
 import ch.exense.commons.app.Configuration;
+import ch.exense.viz.persistence.accessors.DefaultAccessorModule;
+import ch.exense.viz.persistence.accessors.EmbeddedMongo;
 
 public class MongoClientSession implements Closeable {
 
@@ -86,6 +87,11 @@ public class MongoClientSession implements Closeable {
 
 	public MongoDatabase getMongoDatabase() {
 		return mongoClient.getDatabase(db);
+	}
+	
+
+	public MongoClient getMongoClient() {
+		return mongoClient;
 	}
 
 	public org.jongo.MongoCollection getJongoCollection(String collectionName) {

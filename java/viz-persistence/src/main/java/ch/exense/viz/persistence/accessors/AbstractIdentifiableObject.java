@@ -8,6 +8,9 @@ import org.bson.types.ObjectId;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import ch.exense.viz.persistence.accessors.serialization.MapDeserializer;
+import ch.exense.viz.persistence.accessors.serialization.MapSerializer;
+
 /**
  * This class is the parent class of all objects that have to be identified
  * uniquely for persistence purposes for instance

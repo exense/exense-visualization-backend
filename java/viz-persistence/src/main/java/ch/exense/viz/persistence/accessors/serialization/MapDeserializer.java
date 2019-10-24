@@ -5,7 +5,7 @@
  * See <http://www.gnu.org/licenses/>.
  * 
  *******************************************************************************/
-package ch.exense.viz.persistence.accessors;
+package ch.exense.viz.persistence.accessors.serialization;
 
 import java.io.IOException;
 import java.util.HashMap;

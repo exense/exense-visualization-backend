@@ -11,11 +11,12 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import ch.exense.commons.app.Configuration;
-import ch.exense.viz.persistence.accessors.AbstractCRUDAccessor;
-import ch.exense.viz.persistence.accessors.MongoClientSession;
+import ch.exense.viz.persistence.accessors.GenericVizAccessor;
+import ch.exense.viz.persistence.accessors.GenericVizAccessor.VizCollection;
+import ch.exense.viz.persistence.accessors.typed.DashboardAccessor;
 import ch.exense.viz.persistence.model.Dashboard;
 
-public class DashboardCRUDTest {
+public class VizCRUDTest {
 
 	private static Configuration config;
 	private static MongoClientSession session;
@@ -48,11 +49,24 @@ public class DashboardCRUDTest {
 	}
 	
 	@Test
-	public void genericAccessorTest() {
+	public void genericVizAccessorTest() {
 		Dashboard d = new Dashboard();
 		d.setTitle("foo");
 		d.setOid("bar");
-		AbstractCRUDAccessor<Dashboard> accessor = new AbstractCRUDAccessor<>(session, "dashboards", Dashboard.class);
+		GenericVizAccessor accessor = new GenericVizAccessor(session);
+		accessor.insertObject(d, VizCollection.DASHBOARDS);
+		
+		Assert.assertEquals("foo", accessor.findByAttribute("title", "foo", VizCollection.DASHBOARDS, Dashboard.class).getTitle());
+		accessor.removeByAttribute("title", "foo", VizCollection.DASHBOARDS);
+		Assert.assertNull(accessor.findByAttribute("title", "foo", VizCollection.DASHBOARDS, Dashboard.class));
+	}
+	
+	@Test
+	public void typedAccessorTest() {
+		Dashboard d = new Dashboard();
+		d.setTitle("foo");
+		d.setOid("bar");
+		DashboardAccessor accessor = new DashboardAccessor(session);
 		Dashboard saved = accessor.save(d);
 		
 		Map<String, String> attributes = new HashMap<>();
@@ -61,4 +75,5 @@ public class DashboardCRUDTest {
 		accessor.remove(saved.getId());
 		Assert.assertNull(accessor.findByAttributes(attributes, null));
 	}
+
 }
