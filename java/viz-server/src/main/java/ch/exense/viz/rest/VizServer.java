@@ -53,7 +53,7 @@ public class VizServer {
 		sh.setInitParameter("cacheControl","max-age=0,public"); 
 
 		ServletContextHandler serviceHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		serviceHandler.setContextPath("/viz");
+		serviceHandler.setContextPath("/rest");
 		serviceHandler.addServlet(sh, "/*");
 		serviceHandler.setInitParameter("cacheControl","max-age=0,public"); 
 
