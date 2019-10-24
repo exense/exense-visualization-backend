@@ -36,12 +36,11 @@ public class VizServer {
 		
 		ContextHandlerCollection hcoll = new ContextHandlerCollection();
 		
-		GenericVizAccessor accessor = new GenericVizAccessor(new MongoClientSession(config));
-
 		ResourceConfig resourceConfig = new ResourceConfig();
 		resourceConfig.register(VizServlet.class);
 		resourceConfig.register(JacksonJaxbJsonProvider.class);
 		
+		GenericVizAccessor accessor = new GenericVizAccessor(new MongoClientSession(config));
 		resourceConfig.register(new AbstractBinder() {	
 			@Override
 			protected void configure() {

@@ -1,7 +1,9 @@
 package ch.exense.viz.rest;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
 
+@Singleton
 @Path("/crud")
 public class VizServlet{
 
@@ -28,19 +31,34 @@ public class VizServlet{
 	@Path("/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveSession(@PathParam(value = "collection") String collection, final Object vizObject) {
+	public Response saveObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name, final Object vizObject) {
 		logger.info("Saving object: " + vizObject + " to collection: " + collection);
+		Object found = this.accessor.findByAttribute("name", name, collection, Object.class);
+		if(found != null) {
+			this.accessor.removeByAttribute("name", name, collection);
+			logger.debug("Removed existing object: " + found + " with name: " + name);
+		}
 		this.accessor.insertObject(vizObject, collection);
-		return Response.status(200).entity("{ \"status\" : \"ok\"}").build();
+		return Response.status(200).entity(found).build();
 	}
 	
 	@GET
 	@Path("/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Object loadSession(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
-		logger.info("Loading object by name: " + name + " from collection: " + collection);
+	public Object loadObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
+		logger.debug("Loading object by name: " + name + " from collection: " + collection);
 		return Response.status(200).entity(this.accessor.findByAttribute("name", name, collection, Object.class)).build();
+	}
+	
+	@DELETE
+	@Path("/{collection}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object deleteObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
+		logger.debug("Removing object by name: " + name + " from collection: " + collection);
+		this.accessor.removeByAttribute("name", name, collection);
+		return Response.status(200).entity(null).build();
 	}
 
 }
