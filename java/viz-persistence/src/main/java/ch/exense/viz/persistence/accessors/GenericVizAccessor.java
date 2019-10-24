@@ -4,7 +4,7 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ch.exense.viz.persistence.MongoClientSession;
+import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class GenericVizAccessor {
 

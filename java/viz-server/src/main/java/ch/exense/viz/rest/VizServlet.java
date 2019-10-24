@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
 
 @Singleton
-@Path("/crud")
+@Path("/viz")
 public class VizServlet{
 
 	private static final Logger logger = LoggerFactory.getLogger(VizServlet.class);
@@ -28,7 +28,7 @@ public class VizServlet{
 	GenericVizAccessor accessor;
 			
 	@POST
-	@Path("/{collection}")
+	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name, final Object vizObject) {
@@ -43,7 +43,7 @@ public class VizServlet{
 	}
 	
 	@GET
-	@Path("/{collection}")
+	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object loadObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
@@ -52,13 +52,22 @@ public class VizServlet{
 	}
 	
 	@DELETE
-	@Path("/{collection}")
+	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object deleteObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
 		logger.debug("Removing object by name: " + name + " from collection: " + collection);
 		this.accessor.removeByAttribute("name", name, collection);
 		return Response.status(200).entity(null).build();
+	}
+	
+	@POST
+	@Path("/proxy")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response proxyQuery(ProxiedQuery query) {
+		
+		return Response.status(200).entity(found).build();
 	}
 
 }

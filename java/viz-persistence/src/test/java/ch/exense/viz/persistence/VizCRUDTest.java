@@ -14,6 +14,7 @@ import ch.exense.commons.app.Configuration;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
 import ch.exense.viz.persistence.accessors.typed.DashboardAccessor;
 import ch.exense.viz.persistence.model.Dashboard;
+import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class VizCRUDTest {
 

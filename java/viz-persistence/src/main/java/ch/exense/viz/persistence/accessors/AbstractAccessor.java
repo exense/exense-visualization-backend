@@ -9,7 +9,7 @@ import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.IndexOptions;
 
-import ch.exense.viz.persistence.MongoClientSession;
+import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class AbstractAccessor {
 

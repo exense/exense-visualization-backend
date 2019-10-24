@@ -29,7 +29,7 @@ import javax.json.spi.JsonProvider;
 import org.bson.types.ObjectId;
 import org.jongo.MongoCollection;
 
-import ch.exense.viz.persistence.MongoClientSession;
+import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class AbstractCRUDAccessor<T extends AbstractIdentifiableObject> extends AbstractAccessor implements CRUDAccessor<T> {
 			

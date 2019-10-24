@@ -11,8 +11,8 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import ch.exense.commons.app.Configuration;
-import ch.exense.viz.persistence.MongoClientSession;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
+import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class VizServer {
 
