@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.exense.viz</groupId>
-	<artifactId>viz-persistence</artifactId>
+	<artifactId>viz-proxy</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
-	<name>Viz Persistence</name>
+	<name>Viz HTTP Proxy Service</name>
 	<description>
-		Java persistence services for Viz objects
+		 Backend HTTP Proxy service to work around cross-site scripting limitations
 	</description>
 	<url>http://exense.ch/</url>
 	<licenses>
@@ -41,52 +41,15 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>ch.exense</groupId>
-			<artifactId>exense-commons</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jongo</groupId>
-			<artifactId>jongo</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.flapdoodle.embed</groupId>
-			<artifactId>de.flapdoodle.embed.mongo</artifactId>
-			<version>2.2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongodb-driver</artifactId>
-			<version>3.4.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr353</artifactId>
-			<version>2.5.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-json-org</artifactId>
-			<version>2.5.2</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.3</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.json -->
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
 		</dependency>
 	</dependencies>
 
