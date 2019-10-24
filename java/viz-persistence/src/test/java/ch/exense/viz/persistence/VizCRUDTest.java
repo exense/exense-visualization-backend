@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import ch.exense.commons.app.Configuration;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
-import ch.exense.viz.persistence.accessors.GenericVizAccessor.VizCollection;
 import ch.exense.viz.persistence.accessors.typed.DashboardAccessor;
 import ch.exense.viz.persistence.model.Dashboard;
 
@@ -54,11 +53,11 @@ public class VizCRUDTest {
 		d.setTitle("foo");
 		d.setOid("bar");
 		GenericVizAccessor accessor = new GenericVizAccessor(session);
-		accessor.insertObject(d, VizCollection.DASHBOARDS);
+		accessor.insertObject(d, "dashboards");
 		
-		Assert.assertEquals("foo", accessor.findByAttribute("title", "foo", VizCollection.DASHBOARDS, Dashboard.class).getTitle());
-		accessor.removeByAttribute("title", "foo", VizCollection.DASHBOARDS);
-		Assert.assertNull(accessor.findByAttribute("title", "foo", VizCollection.DASHBOARDS, Dashboard.class));
+		Assert.assertEquals("foo", accessor.findByAttribute("title", "foo", "dashboards", Dashboard.class).getTitle());
+		accessor.removeByAttribute("title", "foo", "dashboards");
+		Assert.assertNull(accessor.findByAttribute("title", "foo", "dashboards", Dashboard.class));
 	}
 	
 	@Test

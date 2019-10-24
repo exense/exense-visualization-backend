@@ -8,6 +8,7 @@ import ch.exense.viz.persistence.MongoClientSession;
 
 public class GenericVizAccessor {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(GenericVizAccessor.class);
 
 	private MongoClientSession session;
@@ -15,33 +16,16 @@ public class GenericVizAccessor {
 	public GenericVizAccessor(MongoClientSession session) {
 		this.session = session;
 	}
-	
-	public static enum VizCollection{
-		SESSIONS("sessions"), DASHBOARDS("dashboards"), DASHLETS("dashlets"), SERVICES("services"),
-		QUERIES("queries"), PROCESSORS("processors"), FUNCTIONS("functions");
-		
-		private String collname;
-		VizCollection(String collname) {
-	        this.setCollname(collname);
-	    }
-		public String getCollname() {
-			return collname;
-		}
-		public void setCollname(String collname) {
-			this.collname = collname;
-		}
-	}
 
-	public void insertObject(Object obj, VizCollection collection){
-		session.getJongoCollection(collection.getCollname()).insert(obj);
-		logger.debug("Inserted " + obj.toString() + " into " + collection.getCollname());
+	public void insertObject(Object obj, String collection){
+		session.getJongoCollection(collection).insert(obj);
 	}
 	
-	public <T> T findByAttribute(String attributeName, Object attributeValue, VizCollection collection, Class<T> asType){
-		return session.getJongoCollection(collection.getCollname()).findOne(new Document().append(attributeName, attributeValue).toJson()).as(asType);
+	public <T> T findByAttribute(String attributeName, Object attributeValue, String collection, Class<T> asType){
+		return session.getJongoCollection(collection).findOne(new Document().append(attributeName, attributeValue).toJson()).as(asType);
 	}
 
-	public void removeByAttribute(String attributeName, Object attributeValue, VizCollection collection){
-		session.getJongoCollection(collection.getCollname()).remove(new Document().append(attributeName, attributeValue).toJson());
+	public void removeByAttribute(String attributeName, Object attributeValue, String collection){
+		session.getJongoCollection(collection).remove(new Document().append(attributeName, attributeValue).toJson());
 	}
 }
