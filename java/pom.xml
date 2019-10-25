@@ -11,6 +11,25 @@
 		<module>viz-server</module>
 	</modules>
 	
+	<repositories>
+		<!-- nexus Snapshot -->
+		<repository>
+			<id>nexus-exense</id>
+			<url>https://nexus-enterprise.exense.ch/repository/exense/</url>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-exense</id>
+			<url>https://nexus-enterprise.exense.ch/repository/exense/</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
+	
 	<build>
 	</build>
 </project>
