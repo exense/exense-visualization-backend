@@ -73,4 +73,29 @@ public class VizServlet{
 		return Response.status(response.getCode()).entity(response.getData()).build();
 	}
 
+	@POST
+	@Path("/driver")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response driverQuery(DirectMongoQuery request) {
+
+		try {
+			if(request.getHost() != null) {
+				String host = request.getHost().trim().toLowerCase();
+				if(!host.equals("localhost") && !host.equals("127.0.0.1")) {
+					throw new UnsupportedOperationException("remote queries not implemented yet.");
+				}
+			}
+			if(request.getCollection() == null || request.getCollection().trim().isEmpty()) {
+				throw new Exception("Please provide a collection name.");
+			}
+			return Response.status(200)
+					.entity(accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection()))
+					.build();
+		}catch(Exception e) {
+			return Response.status(500)
+					.entity("{ \"error\" : \""+e.getClass() + ": "+ e.getMessage()+"\"}")
+					.build();
+		}
+	}
 }

@@ -1,6 +1,11 @@
 package ch.exense.viz.persistence.accessors;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
+import org.jongo.MongoCursor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,5 +32,18 @@ public class GenericVizAccessor {
 
 	public void removeByAttribute(String attributeName, Object attributeValue, String collection){
 		session.getJongoCollection(collection).remove(new Document().append(attributeName, attributeValue).toJson());
+	}
+	
+	// Unstreamed db result for basic queries
+	public List<Object> execute(String collection, String query, int skip, int limit, String sort, String projection){
+		MongoCursor<Object> cursor = session.getJongoCollection(collection).find(query).skip(skip).limit(limit).sort(sort).projection(projection).as(Object.class);
+		List<Object> result = new ArrayList<Object>();
+		cursor.forEach(e -> result.add(e));
+		try {
+			cursor.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		return result;
 	}
 }
