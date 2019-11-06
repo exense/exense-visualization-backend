@@ -1,5 +1,7 @@
 package ch.exense.viz.rest;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -29,7 +31,7 @@ public class VizServlet{
 
 	@Inject
 	GenericVizAccessor accessor;
-			
+
 	@POST
 	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -44,7 +46,7 @@ public class VizServlet{
 		this.accessor.insertObject(vizObject, collection);
 		return Response.status(200).entity(found).build();
 	}
-	
+
 	@GET
 	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -53,7 +55,7 @@ public class VizServlet{
 		logger.debug("Loading object by name: " + name + " from collection: " + collection);
 		return Response.status(200).entity(this.accessor.findByAttribute("name", name, collection, Object.class)).build();
 	}
-	
+
 	@DELETE
 	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -63,7 +65,7 @@ public class VizServlet{
 		this.accessor.removeByAttribute("name", name, collection);
 		return Response.status(200).entity(null).build();
 	}
-	
+
 	@POST
 	@Path("/proxy")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -78,21 +80,25 @@ public class VizServlet{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response driverQuery(DirectMongoQuery request) {
-
+		List<Object> result = null;
 		try {
-			if(request.getHost() != null) {
-				String host = request.getHost().trim().toLowerCase();
-				if(!host.equals("localhost") && !host.equals("127.0.0.1")) {
-					throw new UnsupportedOperationException("remote queries not implemented yet.");
-				}
-			}
 			if(request.getCollection() == null || request.getCollection().trim().isEmpty()) {
 				throw new Exception("Please provide a collection name.");
 			}
+			
+			if(request.getHost() != null
+					//&& !request.getHost().trim().toLowerCase().equals("localhost")
+					//&& !request.getHost().trim().toLowerCase().equals("127.0.0.1")
+					) {
+					result = accessor.execute(request.getHost(), request.getPort(), request.getDatabase(), request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
+				}else {
+				result = accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
+			}
 			return Response.status(200)
-					.entity(accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection()))
+					.entity(result)
 					.build();
 		}catch(Exception e) {
+			e.printStackTrace();
 			return Response.status(500)
 					.entity("{ \"error\" : \""+e.getClass() + ": "+ e.getMessage()+"\"}")
 					.build();
