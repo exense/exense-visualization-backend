@@ -4,6 +4,12 @@
 	<artifactId>viz-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	
+	<properties>
+		<jackson.version>2.10.0</jackson.version>
+		<jersey.version>2.29.1</jersey.version>
+		<hk2.version>2.6.1</hk2.version>
+	</properties>
 
 	<modules>
 		<module>viz-persistence</module>
