@@ -20,7 +20,7 @@ public class DataTableWrapperSerializer extends JsonSerializer<DataTableWrapper>
 	        List<ObjectWrapper> objs = wrapper.getData();
 	        for (ObjectWrapper obj : objs) {
 	        	gen.writeStartArray();
-	        	gen.writeFieldName(obj.getName());
+	        	gen.writeString(obj.getName());
 	    		gen.writeEndArray();
 	    		
 	        }
