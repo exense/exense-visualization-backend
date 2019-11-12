@@ -37,13 +37,17 @@ public class GenericVizAccessor {
 		session.getJongoCollection(collection).remove(new Document().append(attributeName, attributeValue).toJson());
 	}
 	
+	public List<ObjectWrapper> getAll(String collection){
+		return execute(collection, "{}", 0, 0, "", "");
+	}
+	
 	// Unstreamed db result for basic queries
-	public List<Object> execute(String collection, String query, int skip, int limit, String sort, String projection){
-		MongoCursor<Object> cursor = session.getJongoCollection(collection).find(query).skip(skip).limit(limit).sort(sort).projection(projection).as(Object.class);
+	public List<ObjectWrapper> execute(String collection, String query, int skip, int limit, String sort, String projection){
+		MongoCursor<ObjectWrapper> cursor = session.getJongoCollection(collection).find(query).skip(skip).limit(limit).sort(sort).projection(projection).as(ObjectWrapper.class);
 		return consumeCursor(cursor);
 	}
 	
-	public List<Object> execute(String host, int port, String database, String collection, String query, int skip, int limit, String sort, String projection){
+	public List<ObjectWrapper> execute(String host, int port, String database, String collection, String query, int skip, int limit, String sort, String projection){
 		MongoClient client = new MongoClient(host, port);
 		try{
 			FindIterable<Document> cursor = client.getDatabase(database).getCollection(collection)
@@ -58,14 +62,14 @@ public class GenericVizAccessor {
 		}
 	}
 
-	private List<Object> consumeCursor(Iterable<Document> cursor) {
-		List<Object> result = new ArrayList<Object>();
-		cursor.forEach(d -> result.add(d.toJson()));
+	private List<ObjectWrapper> consumeCursor(Iterable<Document> cursor) {
+		List<ObjectWrapper> result = new ArrayList<>();
+		cursor.forEach(d -> result.add(new ObjectWrapper((String)d.get("name"), d)));
 		return result;
 	}
 
-	private List<Object> consumeCursor(MongoCursor<Object> cursor) {
-		List<Object> result = new ArrayList<Object>();
+	private List<ObjectWrapper> consumeCursor(MongoCursor<ObjectWrapper> cursor) {
+		List<ObjectWrapper> result = new ArrayList<>();
 		cursor.forEach(e -> result.add(e));
 		try {
 			cursor.close();

@@ -1,9 +1,12 @@
 package ch.exense.viz.rest;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -48,6 +51,12 @@ public class VizServer {
 			}
 		});
 		
+		ResourceHandler bb = new ResourceHandler();
+		bb.setResourceBase(Resource.newClassPathResource("webapp").getURI().toString());
+		
+		ContextHandler ctx = new ContextHandler("/");
+		ctx.setHandler(bb);
+		
 		ServletContainer servletContainer = new ServletContainer(resourceConfig);
 		ServletHolder sh = new ServletHolder(servletContainer);
 		sh.setInitParameter("cacheControl","max-age=0,public"); 
@@ -58,6 +67,7 @@ public class VizServer {
 		serviceHandler.setInitParameter("cacheControl","max-age=0,public"); 
 
 		hcoll.addHandler(serviceHandler);
+		hcoll.addHandler(ctx);
 		server.setHandler(hcoll);
 		server.start();
 		server.join();	

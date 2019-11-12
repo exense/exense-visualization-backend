@@ -18,7 +18,9 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.exense.viz.persistence.accessors.DataTableWrapper;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
+import ch.exense.viz.persistence.accessors.ObjectWrapper;
 import ch.exense.viz.proxy.ProxiedRequest;
 import ch.exense.viz.proxy.ProxiedResponse;
 import ch.exense.viz.proxy.ProxyService;
@@ -43,7 +45,7 @@ public class VizServlet{
 			this.accessor.removeByAttribute("name", name, collection);
 			logger.debug("Removed existing object: " + found + " with name: " + name);
 		}
-		this.accessor.insertObject(vizObject, collection);
+		this.accessor.insertObject(new ObjectWrapper(name, vizObject), collection);
 		return Response.status(200).entity(found).build();
 	}
 
@@ -54,6 +56,15 @@ public class VizServlet{
 	public Object loadObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
 		logger.debug("Loading object by name: " + name + " from collection: " + collection);
 		return Response.status(200).entity(this.accessor.findByAttribute("name", name, collection, Object.class)).build();
+	}
+	
+	@GET
+	@Path("/crud/all/{collection}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object getAll(@PathParam(value = "collection") String collection) {
+		logger.debug("Loading full collection: " + collection);
+		return Response.status(200).entity(new DataTableWrapper(this.accessor.getAll(collection))).build();
 	}
 
 	@DELETE
@@ -80,7 +91,7 @@ public class VizServlet{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response driverQuery(DirectMongoQuery request) {
-		List<Object> result = null;
+		List<ObjectWrapper> result = null;
 		try {
 			if(request.getCollection() == null || request.getCollection().trim().isEmpty()) {
 				throw new Exception("Please provide a collection name.");

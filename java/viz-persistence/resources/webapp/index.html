@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="shortcut icon" href="img/favicon.png">
+
+<title>Viz Server</title>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/d3/d3.js"></script>
+<script src="bower_components/nvd3/build/nv.d3.js"></script>
+<script src="bower_components/angular-nvd3/dist/angular-nvd3.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="bower_components/datatables.net/js/jquery.dataTables.js"></script>
+<script
+	src="bower_components/datatables.net-bs/js/dataTables.bootstrap.js"></script>
+<script
+	src="bower_components/datatables.net-select/js/dataTables.select.js"></script>
+
+
+<script src="bower_components/exense-visualization/dist/viz.js"></script>
+
+<script src="static-presets.js"></script>
+
+<link rel="stylesheet" href="bower_components/nvd3/build/nv.d3.css">
+<link rel="stylesheet"
+	href="bower_components/bootstrap/dist/css/bootstrap-theme.css">
+<link rel="stylesheet"
+	href="bower_components/bootstrap/dist/css/bootstrap.css">
+<link rel="stylesheet"
+	href="bower_components/datatables.net-bs/css/dataTables.bootstrap.css" />
+<link rel="stylesheet"
+	href="bower_components/datatables.net-select-dt/css/select.dataTables.css" />
+
+<link rel="stylesheet"
+	href="bower_components/exense-visualization/dist/viz.css">
+</head>
+
+<script>
+	var vizApp = angular.module('viz', [ 'viz-session-manager' ]);
+	vizApp.controller('topController', [ '$scope', function($scope) {
+
+		$scope.staticPresets = new StaticPresets();
+		$scope.dashboardsendpoint = [];
+
+	} ]);
+</script>
+
+<body>
+	<div ng-app='viz'>
+		<div ng-controller="topController">
+			<viz-session-manager restprefix="'/rest/viz'" />
+		</div>
+	</div>
+</body>
+
+</html>
