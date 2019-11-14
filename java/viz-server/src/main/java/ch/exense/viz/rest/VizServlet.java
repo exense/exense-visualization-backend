@@ -13,6 +13,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import ch.exense.viz.persistence.accessors.DataTableWrapper;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
 import ch.exense.viz.persistence.accessors.ObjectWrapper;
+import ch.exense.viz.persistence.accessors.PagedDataTableWrapper;
 import ch.exense.viz.proxy.ProxiedRequest;
 import ch.exense.viz.proxy.ProxiedResponse;
 import ch.exense.viz.proxy.ProxyService;
@@ -65,6 +67,30 @@ public class VizServlet{
 	public Object getAll(@PathParam(value = "collection") String collection) {
 		logger.debug("Loading full collection: " + collection);
 		return Response.status(200).entity(new DataTableWrapper(this.accessor.getAll(collection))).build();
+	}
+
+	@POST
+	@Path("/crud/paged/{collection}")
+	@Consumes("application/x-www-form-urlencoded")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Object getData(@PathParam(value = "collection") String collection, MultivaluedMap<String, String> form) {
+		logger.debug("Loading paged collection: " + collection);
+		int draw = Integer.parseInt(form.get("draw").get(0));
+		int skip = Integer.parseInt(form.get("start").get(0));
+		int limit = skip + Integer.parseInt(form.get("length").get(0));
+		long count = this.accessor.count(collection);
+		PagedDataTableWrapper pagedDataTableResponse = toPagedDataTable(
+				this.accessor.getAll(collection, skip, limit, "{\"name\" : 1}"), draw, count);
+		return Response.status(200).entity(pagedDataTableResponse).build();
+	}
+	
+	private PagedDataTableWrapper toPagedDataTable(List<ObjectWrapper> data, int draw, long count) {
+		PagedDataTableWrapper wrapper = new PagedDataTableWrapper(data);
+		wrapper.setDraw((Integer)draw);
+		//not supporting search yet so recordsFiltered = recordsTotal
+		wrapper.setRecordsFiltered(count);
+		wrapper.setRecordsTotal(count);
+		return wrapper;
 	}
 
 	@DELETE

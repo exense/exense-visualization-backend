@@ -37,8 +37,16 @@ public class GenericVizAccessor {
 		session.getJongoCollection(collection).remove(new Document().append(attributeName, attributeValue).toJson());
 	}
 	
+	public long count(String collection){
+		return session.getJongoCollection(collection).count();
+	}
+	
 	public List<ObjectWrapper> getAll(String collection){
 		return execute(collection, "{}", 0, 0, "", "");
+	}
+	
+	public List<ObjectWrapper> getAll(String collection, int skip, int limit, String sort){
+		return execute(collection, "{}", skip, limit, sort, "");
 	}
 	
 	// Unstreamed db result for basic queries
