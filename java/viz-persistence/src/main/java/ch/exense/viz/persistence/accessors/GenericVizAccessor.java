@@ -41,16 +41,20 @@ public class GenericVizAccessor {
 		return session.getJongoCollection(collection).count();
 	}
 	
-	public List<ObjectWrapper> getAll(String collection){
+	public long count(String collection, String query){
+		return session.getJongoCollection(collection).count(query);
+	}
+	
+	public MongoResult getAll(String collection){
 		return execute(collection, "{}", 0, 0, "", "");
 	}
 	
-	public List<ObjectWrapper> getAll(String collection, int skip, int limit, String sort){
+	public MongoResult getAll(String collection, int skip, int limit, String sort){
 		return execute(collection, "{}", skip, limit, sort, "");
 	}
 	
 	// Unstreamed db result for basic queries
-	public List<ObjectWrapper> execute(String collection, String query, int skip, int limit, String sort, String projection){
+	public MongoResult execute(String collection, String query, int skip, int limit, String sort, String projection){
 		MongoCursor<ObjectWrapper> cursor = session.getJongoCollection(collection).find(query).skip(skip).limit(limit).sort(sort).projection(projection).as(ObjectWrapper.class);
 		return consumeCursor(cursor);
 	}
@@ -76,14 +80,17 @@ public class GenericVizAccessor {
 		return result;
 	}
 
-	private List<ObjectWrapper> consumeCursor(MongoCursor<ObjectWrapper> cursor) {
-		List<ObjectWrapper> result = new ArrayList<>();
-		cursor.forEach(e -> result.add(e));
+	private MongoResult consumeCursor(MongoCursor<ObjectWrapper> cursor) {
+		MongoResult result = new MongoResult();
+		List<ObjectWrapper> data = new ArrayList<>();
+		cursor.forEach(e -> data.add(e));
 		try {
 			cursor.close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
+		result.setCount(cursor.count());
+		result.setData(data);
 		return result;
 	}
 }

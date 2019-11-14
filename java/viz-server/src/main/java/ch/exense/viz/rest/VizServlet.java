@@ -16,11 +16,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ch.exense.viz.persistence.accessors.DataTableWrapper;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
+import ch.exense.viz.persistence.accessors.MongoResult;
 import ch.exense.viz.persistence.accessors.ObjectWrapper;
 import ch.exense.viz.persistence.accessors.PagedDataTableWrapper;
 import ch.exense.viz.proxy.ProxiedRequest;
@@ -66,7 +68,7 @@ public class VizServlet{
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object getAll(@PathParam(value = "collection") String collection) {
 		logger.debug("Loading full collection: " + collection);
-		return Response.status(200).entity(new DataTableWrapper(this.accessor.getAll(collection))).build();
+		return Response.status(200).entity(new DataTableWrapper(this.accessor.getAll(collection).getData())).build();
 	}
 
 	@POST
@@ -78,9 +80,15 @@ public class VizServlet{
 		int draw = Integer.parseInt(form.get("draw").get(0));
 		int skip = Integer.parseInt(form.get("start").get(0));
 		int limit = skip + Integer.parseInt(form.get("length").get(0));
-		long count = this.accessor.count(collection);
-		PagedDataTableWrapper pagedDataTableResponse = toPagedDataTable(
-				this.accessor.getAll(collection, skip, limit, "{\"name\" : 1}"), draw, count);
+		String searchValue = form.get("search[value]").get(0);
+		String query = "{}";
+		
+		if(searchValue != null && !searchValue.isEmpty()) {
+			query = "{\"name\": { $regex : '"+searchValue+"' }}";
+		}
+		
+		MongoResult result = this.accessor.execute(collection, query, skip, limit, "{\"name\" : 1}", "");
+		PagedDataTableWrapper pagedDataTableResponse = toPagedDataTable(result.getData(), draw, result.getCount());
 		return Response.status(200).entity(pagedDataTableResponse).build();
 	}
 	
@@ -129,7 +137,7 @@ public class VizServlet{
 					) {
 					result = accessor.execute(request.getHost(), request.getPort(), request.getDatabase(), request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
 				}else {
-				result = accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
+				result = accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection()).getData();
 			}
 			return Response.status(200)
 					.entity(result)
