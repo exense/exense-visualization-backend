@@ -14,6 +14,7 @@
 	<modules>
 		<module>viz-persistence</module>
 		<module>viz-proxy</module>
+		<module>viz-servlet</module>
 		<module>viz-server</module>
 	</modules>
 	
