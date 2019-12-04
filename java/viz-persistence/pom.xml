@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>ch.exense.viz</groupId>
 		<artifactId>viz-parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 
 	<packaging>jar</packaging>
