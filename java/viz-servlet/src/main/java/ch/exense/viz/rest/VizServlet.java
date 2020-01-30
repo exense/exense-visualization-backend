@@ -43,7 +43,7 @@ public class VizServlet{
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name, final Object vizObject) {
-		logger.info("Saving object: " + vizObject + " to collection: " + collection);
+		logger.debug("Saving object: " + vizObject + " to collection: " + collection);
 		Object found = this.accessor.findByAttribute("name", name, collection, Object.class);
 		if(found != null) {
 			this.accessor.removeByAttribute("name", name, collection);

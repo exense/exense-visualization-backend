@@ -8,7 +8,11 @@
 	<parent>
 		<groupId>ch.exense.viz</groupId>
 		<artifactId>viz-parent</artifactId>
+<<<<<<< HEAD
 		<version>1.1.0-SNAPSHOT</version>
+=======
+		<version>1.0.1-SNAPSHOT</version>
+>>>>>>> 7b576ca640a8a6df7d4a5ee36068a471e68be284
 	</parent>
 
 	<packaging>jar</packaging>
@@ -39,6 +43,11 @@
 			<url>http://exense.ch/</url>
 		</developer>
 	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/exense/exense-visualization-backend.git</connection>
+		<developerConnection>scm:git:[push=]https://github.com/exense/exense-visualization-backend.git[fetch=]https://github.com/exense/exense-visualization-backend.git</developerConnection>
+		<url>https://github.com/exense/exense-visualization-backend.git</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
