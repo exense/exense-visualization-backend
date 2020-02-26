@@ -46,14 +46,6 @@
 		<module>viz-server</module>
 	</modules>
 	
-	<repositories>
-		<!-- nexus Snapshot -->
-		<repository>
-			<id>nexus-exense</id>
-			<url>https://nexus-enterprise.exense.ch/repository/exense/</url>
-		</repository>
-	</repositories>
-	
 	<build>
 		<plugins>
 			<plugin>
