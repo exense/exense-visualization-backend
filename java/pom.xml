@@ -32,6 +32,11 @@
 			<url>http://step.exense.ch/</url>
 		</developer>
 	</developers>
+	<scm>
+		<connection>scm:git:https://github.com/exense/exense-visualization-backend/</connection>
+		<developerConnection>scm:git:https://github.com/exense/exense-visualization-backend.git</developerConnection>
+		<url>https://github.com/exense/exense-visualization-backend/</url>
+  </scm>
 	
 	<properties>
 		<jackson.version>2.10.0</jackson.version>
