@@ -1,6 +1,7 @@
 package ch.exense.viz.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -16,7 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.bson.Document;
+import step.core.collections.Filter;
+import step.core.collections.Filters;
+import step.core.collections.SearchOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +45,9 @@ public class VizServlet{
 	@Path("/crud/{collection}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response saveObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name, final Object vizObject) {
+	public Response saveObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name, final Map<String, Object> vizObject) {
 		logger.debug("Saving object: " + vizObject + " to collection: " + collection);
-		Object found = this.accessor.findByAttribute("name", name, collection, Object.class);
+		Object found = this.accessor.findByAttribute("name", name, collection, ObjectWrapper.class);
 		if(found != null) {
 			this.accessor.removeByAttribute("name", name, collection);
 			logger.debug("Removed existing object: " + found + " with name: " + name);
@@ -59,7 +62,7 @@ public class VizServlet{
 	@Produces(MediaType.APPLICATION_JSON)
 	public Object loadObject(@PathParam(value = "collection") String collection, @QueryParam(value = "name") String name) {
 		logger.debug("Loading object by name: " + name + " from collection: " + collection);
-		return Response.status(200).entity(this.accessor.findByAttribute("name", name, collection, Object.class)).build();
+		return Response.status(200).entity(this.accessor.findByAttribute("name", name, collection, ObjectWrapper.class)).build();
 	}
 	
 	@GET
@@ -81,13 +84,14 @@ public class VizServlet{
 		int skip = Integer.parseInt(form.get("start").get(0));
 		int limit = skip + Integer.parseInt(form.get("length").get(0));
 		String searchValue = form.get("search[value]").get(0);
-		String query = "{}";
 		
+		Filter filter = Filters.empty();
 		if(searchValue != null && !searchValue.isEmpty()) {
-			query = "{\"name\": { $regex : '"+searchValue+"' }}";
+			filter = Filters.regex("name",searchValue,true);
 		}
-		
-		MongoResult result = this.accessor.execute(collection, query, skip, limit, "{\"name\" : 1}", "");
+		 
+		SearchOrder order = new SearchOrder("name",1);
+		MongoResult result = this.accessor.execute(collection, filter, skip, limit, order, "");
 		PagedDataTableWrapper pagedDataTableResponse = toPagedDataTable(result.getData(), draw, result.getCount());
 		return Response.status(200).entity(pagedDataTableResponse).build();
 	}
@@ -135,9 +139,10 @@ public class VizServlet{
 					//&& !request.getHost().trim().toLowerCase().equals("localhost")
 					//&& !request.getHost().trim().toLowerCase().equals("127.0.0.1")
 					) {
-					result = accessor.execute(request.getHost(), request.getPort(), request.getDatabase(), request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
+				throw new RuntimeException("remote collection accessor not implemented");
+				//	result = accessor.execute(request.getHost(), request.getPort(), request.getDatabase(), request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection());
 				}else {
-				result = accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection()).getData();
+					result = accessor.execute(request.getCollection(), request.getQuery(), request.getSkip(), request.getLimit(), request.getSort(), request.getProjection()).getData();
 			}
 			return Response.status(200)
 					.entity(result)

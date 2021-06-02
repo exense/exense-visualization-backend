@@ -1,10 +1,12 @@
 package ch.exense.viz.persistence.model;
 
+import step.core.accessors.AbstractIdentifiableObject;
+
 import java.util.List;
 
-import ch.exense.viz.persistence.accessors.AbstractIdentifiableObject;
-
-public class Dashboard extends AbstractIdentifiableObject{
+public class Dashboard extends AbstractIdentifiableObject {
+	
+	public static final String ENTITY_NAME = "dashboards";
 
 	private String title;
 	

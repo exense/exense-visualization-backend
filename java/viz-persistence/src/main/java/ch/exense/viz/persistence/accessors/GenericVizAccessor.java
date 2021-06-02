@@ -1,96 +1,96 @@
 package ch.exense.viz.persistence.accessors;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.bson.Document;
-import org.jongo.MongoCursor;
+import ch.exense.commons.app.Configuration;
+import step.core.collections.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.mongodb.MongoClient;
-import com.mongodb.client.FindIterable;
-
-import ch.exense.viz.persistence.mongodb.MongoClientSession;
+import step.core.collections.mongodb.MongoDBCollectionFactory;
 
 public class GenericVizAccessor {
 
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(GenericVizAccessor.class);
 
-	private MongoClientSession session;
+	private CollectionFactory collectionFactory;
 	
-	public GenericVizAccessor(MongoClientSession session) {
-		this.session = session;
+	public GenericVizAccessor(CollectionFactory collectionFactory) {
+		this.collectionFactory = collectionFactory;
 	}
 
-	public void insertObject(Object obj, String collection){
-		session.getJongoCollection(collection).insert(obj);
+	public void insertObject(ObjectWrapper obj, String collection){
+		collectionFactory.getCollection(collection, ObjectWrapper.class).save(obj);
 	}
 	
-	public <T> T findByAttribute(String attributeName, Object attributeValue, String collection, Class<T> asType){
-		return session.getJongoCollection(collection).findOne(new Document().append(attributeName, attributeValue).toJson()).as(asType);
+	public <T> T findByAttribute(String attributeName, String attributeValue, String collection, Class<T> asType){
+		Collection<T> driver = collectionFactory.getCollection(collection, asType);
+		return driver.find(Filters.equals(attributeName,attributeValue),null,null,null,0)
+				.findFirst().orElse(null);
 	}
 
-	public void removeByAttribute(String attributeName, Object attributeValue, String collection){
-		session.getJongoCollection(collection).remove(new Document().append(attributeName, attributeValue).toJson());
+	public void removeByAttribute(String attributeName, String attributeValue, String collection){
+		collectionFactory.getCollection(collection, ObjectWrapper.class).remove(Filters.equals(attributeName,attributeValue));
 	}
 	
 	public long count(String collection){
-		return session.getJongoCollection(collection).count();
+		Collection<ObjectWrapper> driver = collectionFactory.getCollection(collection, ObjectWrapper.class);
+		return driver.find(Filters.empty(), null, null, null, 0).count();
 	}
-	
-	public long count(String collection, String query){
-		return session.getJongoCollection(collection).count(query);
+
+	public long count(String collection, Filter filter){
+		Collection<ObjectWrapper> driver = collectionFactory.getCollection(collection, ObjectWrapper.class);
+		return driver.find(filter, null, null, null, 0).count();
 	}
 	
 	public MongoResult getAll(String collection){
-		return execute(collection, "{}", 0, 0, "", "");
+		return execute(collection, Filters.empty(), 0, 0, null, "");
 	}
 	
-	public MongoResult getAll(String collection, int skip, int limit, String sort){
-		return execute(collection, "{}", skip, limit, sort, "");
+	public MongoResult getAll(String collection, int skip, int limit, SearchOrder order){
+		return execute(collection, Filters.empty(), skip, limit, order, "");
 	}
 	
 	// Unstreamed db result for basic queries
-	public MongoResult execute(String collection, String query, int skip, int limit, String sort, String projection){
-		MongoCursor<ObjectWrapper> cursor = session.getJongoCollection(collection).find(query).skip(skip).limit(limit).sort(sort).projection(projection).as(ObjectWrapper.class);
-		return consumeCursor(cursor);
+	public MongoResult execute(String collection, Filter filter, int skip, int limit, SearchOrder order, String projection){
+		Collection<ObjectWrapper> driver = collectionFactory.getCollection(collection, ObjectWrapper.class);
+		List<String> projectionField = (projection!=null && !projection.isEmpty()) ? 
+				Arrays.asList(projection.split(",")) : null;
+		Stream<ObjectWrapper> objectStream = driver.findReduced(filter, order, skip, limit, 0, projectionField);
+		return consumeStream(objectStream);
 	}
 	
-	public List<ObjectWrapper> execute(String host, int port, String database, String collection, String query, int skip, int limit, String sort, String projection){
-		MongoClient client = new MongoClient(host, port);
-		try{
-			FindIterable<Document> cursor = client.getDatabase(database).getCollection(collection)
-					.find(query!=null?Document.parse(query):Document.parse("{}"))
-					.skip(skip)
-					.limit(limit)
-					.sort(sort!=null?Document.parse(sort):Document.parse("{}"))
-					.projection(projection!=null?Document.parse(projection):Document.parse("{}"));
-			return consumeCursor(cursor);
-		}finally {
-			client.close();
-		}
+//	TODO 
+	public List<ObjectWrapper> execute(String host, int port, String database, String collection, Filter filter, int skip, int limit, SearchOrder order, String projection){
+		Configuration configuration = new Configuration();
+		configuration.putProperty("db.host", host);
+		configuration.putProperty("db.port", String.valueOf(port));
+		configuration.putProperty("db.database", database);
+		MongoDBCollectionFactory remoteCollectionFactory = new MongoDBCollectionFactory(configuration);
+		Collection<Document> driver = remoteCollectionFactory.getCollection(collection, Document.class);
+
+		List<String> projectionField = (projection!=null && !projection.isEmpty()) ?
+				Arrays.asList(projection.split(",")) : null;
+		Stream<Document> objectStream = driver.findReduced(filter, order, skip, limit, 0, projectionField);
+		return consumeStream(objectStream.collect(Collectors.toList()));
 	}
 
-	private List<ObjectWrapper> consumeCursor(Iterable<Document> cursor) {
+	private List<ObjectWrapper> consumeStream(Iterable<Document> stream) {
 		List<ObjectWrapper> result = new ArrayList<>();
-		cursor.forEach(d -> result.add(new ObjectWrapper((String)d.get("name"), d)));
+		stream.forEach(d -> result.add(new ObjectWrapper((String)d.get("name"), d)));
 		return result;
 	}
-
-	private MongoResult consumeCursor(MongoCursor<ObjectWrapper> cursor) {
+	
+	private MongoResult consumeStream(Stream<ObjectWrapper> stream) {
 		MongoResult result = new MongoResult();
-		List<ObjectWrapper> data = new ArrayList<>();
-		cursor.forEach(e -> data.add(e));
-		try {
-			cursor.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		result.setCount(cursor.count());
+		List<ObjectWrapper> data = stream.collect(Collectors.toList());
 		result.setData(data);
+		result.setCount(data.size());
 		return result;
 	}
+	
 }

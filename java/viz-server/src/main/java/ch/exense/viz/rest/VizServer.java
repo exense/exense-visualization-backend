@@ -1,5 +1,6 @@
 package ch.exense.viz.rest;
 
+import step.core.collections.CollectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -15,7 +16,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import ch.exense.commons.app.Configuration;
 import ch.exense.viz.persistence.accessors.GenericVizAccessor;
-import ch.exense.viz.persistence.mongodb.MongoClientSession;
 
 public class VizServer {
 
@@ -34,16 +34,23 @@ public class VizServer {
 
 		this.server = new Server(8199);
 		
-		Configuration config = new Configuration();
-		config.putProperty("isTestDb", "true");
+		Configuration configuration = new Configuration();
+		configuration.putProperty("isTestDb", "true");
 		
 		ContextHandlerCollection hcoll = new ContextHandlerCollection();
 		
 		ResourceConfig resourceConfig = new ResourceConfig();
 		resourceConfig.register(VizServlet.class);
 		resourceConfig.register(JacksonJaxbJsonProvider.class);
+
+		//String collectionClassname = configuration.getProperty("db.type", FilesystemCollectionFactory.class.getName());
+		//Since migration to mongojack and newest mongo driver we cannot use jongo. Session contains field with do which
+		//can only be inserted in mongo with jongo (mongo driver does validation and throw an exception)
+		String collectionClassname = "FilesystemCollectionFactory.class.getName()";
+		CollectionFactory collectionFactory = (CollectionFactory) Class.forName(collectionClassname)
+				.getConstructor(Configuration.class).newInstance(configuration);
 		
-		GenericVizAccessor accessor = new GenericVizAccessor(new MongoClientSession(config));
+		GenericVizAccessor accessor = new GenericVizAccessor(collectionFactory);
 		resourceConfig.register(new AbstractBinder() {	
 			@Override
 			protected void configure() {

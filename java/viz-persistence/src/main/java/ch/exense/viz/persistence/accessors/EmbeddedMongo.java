@@ -3,7 +3,10 @@ package ch.exense.viz.persistence.accessors;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import com.mongodb.MongoClient;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
 import de.flapdoodle.embed.mongo.MongodExecutable;
@@ -45,7 +48,9 @@ public class EmbeddedMongo{
 		try {
 			mongodExecutable = starter.prepare(mongodConfig);
 			this.mongod = mongodExecutable.start();
-			client = new MongoClient(bindIp, port);
+			MongoClientSettings.Builder builder = MongoClientSettings.builder();
+			builder.applyConnectionString(new ConnectionString("mongodb://"+bindIp+":"+port));
+			client = MongoClients.create(builder.build());
 		}catch(IOException e1) {
 			System.out.println("Retrying start due to windows issue with mongo.lock file");
 			try {

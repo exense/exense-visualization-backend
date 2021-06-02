@@ -1,5 +1,8 @@
 package ch.exense.viz.rest;
 
+import step.core.collections.Filter;
+import step.core.collections.SearchOrder;
+
 public class DirectMongoQuery {
 	
 	private String host;
@@ -7,8 +10,8 @@ public class DirectMongoQuery {
 	private int port;
 	private String database;
 	private String collection;
-	private String query;
-	private String sort;
+	private Filter query;
+	private SearchOrder order;
 	private String projection;
 	private int skip;
 	private int limit;
@@ -42,17 +45,17 @@ public class DirectMongoQuery {
 	public void setCollection(String collection) {
 		this.collection = collection;
 	}
-	public String getQuery() {
+	public Filter getQuery() {
 		return query;
 	}
-	public void setQuery(String query) {
+	public void setQuery(Filter query) {
 		this.query = query;
 	}
-	public String getSort() {
-		return sort;
+	public SearchOrder getSort() {
+		return order;
 	}
-	public void setSort(String sort) {
-		this.sort = sort;
+	public void setSort(SearchOrder order) {
+		this.order = order;
 	}
 	public int getSkip() {
 		return skip;

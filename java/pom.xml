@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ch.exense.viz</groupId>
 	<artifactId>viz-parent</artifactId>
-	<version>1.1.0-SNAPSHOT</version>
+	<version>0.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	
 	<name>Exense visualization backend</name>
@@ -42,7 +42,16 @@
 		<jackson.version>2.10.0</jackson.version>
 		<jersey.version>2.29.1</jersey.version>
 		<hk2.version>2.6.1</hk2.version>
+		<step-framework.version>2021.05.28-ID71abf87</step-framework.version>
 	</properties>
+
+	<repositories>
+		<!-- staging nexus -->
+		<repository>
+			<id>nexus-staging</id>
+			<url>https://nexus-enterprise.exense.ch/repository/staging-maven/</url>
+		</repository>
+	</repositories>
 
 	<modules>
 		<module>viz-persistence</module>
