@@ -70,7 +70,7 @@ public class GenericVizAccessor {
 		configuration.putProperty("db.host", host);
 		configuration.putProperty("db.port", String.valueOf(port));
 		configuration.putProperty("db.database", database);
-		MongoDBCollectionFactory remoteCollectionFactory = new MongoDBCollectionFactory(configuration);
+		MongoDBCollectionFactory remoteCollectionFactory = new MongoDBCollectionFactory(configuration.getUnderlyingPropertyObject());
 		Collection<Document> driver = remoteCollectionFactory.getCollection(collection, Document.class);
 
 		List<String> projectionField = (projection!=null && !projection.isEmpty()) ?

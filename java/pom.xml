@@ -42,7 +42,7 @@
 		<jackson.version>2.10.0</jackson.version>
 		<jersey.version>2.29.1</jersey.version>
 		<hk2.version>2.6.1</hk2.version>
-		<step-framework.version>2021.05.28-ID71abf87</step-framework.version>
+		<step-framework.version>2021.06.04-ID5ea663b</step-framework.version>
 		<jetty.version>9.4.14.v20181114</jetty.version>
 	</properties>
 

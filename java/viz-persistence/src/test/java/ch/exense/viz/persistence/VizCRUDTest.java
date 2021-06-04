@@ -30,7 +30,7 @@ public class VizCRUDTest {
 	
 	@BeforeClass
 	public static void beforeClass() throws IOException {
-		fsCollectionFactory = new FilesystemCollectionFactory(getConfiguration());
+		fsCollectionFactory = new FilesystemCollectionFactory(getConfiguration().getUnderlyingPropertyObject());
 
 		dashboardsCol = fsCollectionFactory.getCollection(Dashboard.ENTITY_NAME, Dashboard.class);
 		dashboards = new DashboardAccessor(dashboardsCol);
