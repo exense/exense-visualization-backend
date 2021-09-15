@@ -59,9 +59,6 @@
 			<artifactId>viz-servlet</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>de.flapdoodle.embed</groupId> <artifactId>de.flapdoodle.embed.mongo</artifactId> 
-			<version>2.2.0</version> </dependency> <dependency> <groupId>org.mongodb</groupId> 
-			<artifactId>mongodb-driver</artifactId> <version>3.4.2</version> </dependency> -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
