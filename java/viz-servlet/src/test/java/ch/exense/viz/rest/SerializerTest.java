@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ch.exense.viz.persistence.accessors.DataTableWrapper;
 import ch.exense.viz.persistence.accessors.ObjectWrapper;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 
 public class SerializerTest {
 	
