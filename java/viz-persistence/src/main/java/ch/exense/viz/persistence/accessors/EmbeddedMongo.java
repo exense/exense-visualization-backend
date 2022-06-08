@@ -12,8 +12,7 @@ import com.mongodb.client.MongoDatabase;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.IMongodConfig;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
+import de.flapdoodle.embed.mongo.config.MongodConfig;
 import de.flapdoodle.embed.mongo.config.Net;
 import de.flapdoodle.embed.mongo.config.Storage;
 import de.flapdoodle.embed.mongo.distribution.Version;
@@ -38,7 +37,7 @@ public class EmbeddedMongo{
 	public void start() throws UnknownHostException, IOException {
 		MongodStarter starter = MongodStarter.getDefaultInstance();
 
-		IMongodConfig mongodConfig = new MongodConfigBuilder()
+		MongodConfig mongodConfig = MongodConfig.builder()
 				.version(Version.Main.PRODUCTION)
 				.net(new Net(bindIp, this.port, Network.localhostIsIPv6()))
 				.replication(new Storage(this.dbpath, null, 0))
