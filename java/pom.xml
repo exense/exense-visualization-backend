@@ -42,14 +42,15 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-
-		<step-framework.version>2022.06.08-ID2eab19f</step-framework.version>
+		<!-- internal dependencies -->
+		<step-framework.version>2022.06.09-ID4e41526</step-framework.version>
+		<!-- external dependencies -->
 		<jackson.version>2.13.3</jackson.version>
 		<jersey.version>3.0.4</jersey.version>
 		<hk2.version>3.0.1</hk2.version>
 		<jetty.version>11.0.9</jetty.version>
 		<junit.version>4.13.1</junit.version>
-		<slf4j.version>1.7.5</slf4j.version>
+		<slf4j.version>1.7.36</slf4j.version>
 	</properties>
 
 	<repositories>
