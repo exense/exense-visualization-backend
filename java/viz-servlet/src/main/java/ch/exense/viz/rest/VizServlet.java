@@ -3,6 +3,8 @@ package ch.exense.viz.rest;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -34,6 +36,8 @@ import ch.exense.viz.proxy.ProxyService;
 
 @Singleton
 @Path("/viz")
+@Tag(name = "Viz")
+@Hidden
 public class VizServlet{
 
 	private static final Logger logger = LoggerFactory.getLogger(VizServlet.class);
